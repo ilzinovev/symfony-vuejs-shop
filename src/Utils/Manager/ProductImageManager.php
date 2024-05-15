@@ -36,7 +36,7 @@ class ProductImageManager
         $this->entityManager    = $entityManager;
         $this->filesystemWorker = $filesystemWorker;
         $this->uploadsTempDir   = $uploadsTempDir;
-        $this->imageResizer = $imageResizer;
+        $this->imageResizer     = $imageResizer;
     }
 
     /**
@@ -51,30 +51,42 @@ class ProductImageManager
         }
 
         $this->filesystemWorker->createFolderIfItNotExist($productDir);
-        $filenameId        = uniqid();
-        $imageSmallParams  = [
+        $filenameId       = uniqid();
+        $imageSmallParams = [
             'width'       => 60,
             'height'      => null,
             'newFolder'   => $productDir,
             'newFilename' => sprintf('%s_%s.jpg', $filenameId, 'small')
         ];
 
-        $imageSmall = $this->imageResizer->resizeImageAndSave($this->uploadsTempDir,$tempImageFilename, $imageSmallParams);
+        $imageSmall        = $this->imageResizer->resizeImageAndSave(
+            $this->uploadsTempDir,
+            $tempImageFilename,
+            $imageSmallParams
+        );
         $imageMiddleParams = [
             'width'       => 430,
             'height'      => null,
             'newFolder'   => $productDir,
             'newFilename' => sprintf('%s_%s.jpg', $filenameId, 'middle')
         ];
-        $imageMiddle = $this->imageResizer->resizeImageAndSave($this->uploadsTempDir,$tempImageFilename, $imageMiddleParams);
+        $imageMiddle       = $this->imageResizer->resizeImageAndSave(
+            $this->uploadsTempDir,
+            $tempImageFilename,
+            $imageMiddleParams
+        );
 
-        $imageBigParams    = [
+        $imageBigParams = [
             'width'       => 800,
             'height'      => null,
             'newFolder'   => $productDir,
             'newFilename' => sprintf('%s_%s.jpg', $filenameId, 'big')
         ];
-        $imageBig = $this->imageResizer->resizeImageAndSave($this->uploadsTempDir,$tempImageFilename, $imageBigParams);
+        $imageBig       = $this->imageResizer->resizeImageAndSave(
+            $this->uploadsTempDir,
+            $tempImageFilename,
+            $imageBigParams
+        );
 
 
         $productImage = new ProductImage();
@@ -84,6 +96,20 @@ class ProductImageManager
 
 
         return $productImage;
+    }
+
+    public function removeImageFromProduct(ProductImage $productImage, string $productDir)
+    {
+        $smallFilePath  = $productDir . '/' . $productImage->getFilenameSmall();
+        $middleFilePath = $productDir . '/' . $productImage->getFilenameMiddle();
+        $bigFilePath    = $productDir . '/' . $productImage->getFilenameBig();
+        $this->filesystemWorker->remove($smallFilePath);
+        $this->filesystemWorker->remove($middleFilePath);
+        $this->filesystemWorker->remove($bigFilePath);
+
+        $product = $productImage->getProduct();
+        $product->removeProductImage($productImage);
+        $this->entityManager->flush();
     }
 
 

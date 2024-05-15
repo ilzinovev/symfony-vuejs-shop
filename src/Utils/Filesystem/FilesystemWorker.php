@@ -23,9 +23,19 @@ class FilesystemWorker
      */
     public function createFolderIfItNotExist(string $folder)
     {
-
         if (!$this->filesystem->exists($folder)) {
             $this->filesystem->mkdir($folder);
+        }
+    }
+
+    /**
+     * @param string $item
+     * @return void
+     */
+    public function remove(string $item)
+    {
+        if($this->filesystem->exists($item)){
+            $this->filesystem->remove($item);
         }
     }
 }
