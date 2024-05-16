@@ -5,20 +5,16 @@
 {% block body %}
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <div class="d-flex align-items-center">
-                <a href="{{ path('admin_product_list') }}" class="font-weight-bold text-primary">Products</a>
-                <div class="ml-2 mr-2"></div>
-                <h6 class="m-0 font-weight-bold text-primary">
-                    {% if product.id %}
-                        Edit
-                    {% else %}
-                        Add new
-                    {% endif %}
-                </h6>
-            </div>
-            <a href="{{ path('admin_product_add') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                <i class="fas fa-plus fa-sm text-white-50"></i> Add new
-            </a>
+
+
+        {% include 'admin/_embed/_card/_breadcrumbs.html.twig' with {
+            'sectionTitle' : 'Products',
+            'actionUrl' : path('admin_product_list'),
+            'addActionUrl' : path('admin_product_add'),
+            'entity': product
+        }
+
+        %}
         </div>
 
         <div class="card-body">
@@ -32,6 +28,15 @@
                     <div class="form-error">
                         {{ form_errors(form.title) }}
                     </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-1">
+                    Slug
+                </div>
+                <div class="col-md-11">
+                    {{ product.slug }}
+
                 </div>
             </div>
 
@@ -134,21 +139,10 @@
             </div>
             <br>
 
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <a href="{{ path('admin_product_list') }}" class="btn btn-default btn-return">
-                        <i class="fas fa-arrow-left"></i>
-                    </a>
-                    <button type="submit" class="btn btn-primary">Save
-                    </button>
-                </div>
-
-                {% if product %}
-                    <a class="btn btn-white" data-toggle="modal" data-target="#approveDeleteModal">
-                        <i class="fas fa-times fa-sm"></i> Delete row
-                    </a>
-                {% endif %}
-            </div>
+            {% include 'admin/_embed/_card/_form_buttons.html.twig' with{
+                'entity': product,
+                'catalogUrl': path('admin_product_list')
+            } %}
             {{ form_rest(form ) }}
 
             {{ form_end(form) }}
@@ -157,27 +151,14 @@
         </div>
     </div>
 
-    {% if product %}
-        <div class="modal fade" id="approveDeleteModal" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Are you sure?</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">x</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Are you sure you want to delete this row?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <a href="{{ path('admin_product_delete', { 'id': product.id }) }}"
-                           class="btn btn-danger">Delete</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+    {% if product.id %}
+        {% include 'admin/_embed/_utils/_modal.html.twig' with {
+            'modalId': 'approveDeleteModal',
+            'modalTitle': 'Are you sure?',
+            'modalText':'Product Will be deleted',
+            'actionUrl': path('admin_product_delete', {'id': product.id}),
+            'modalBtnText':'Delete row'
+        } %}
     {% endif %}
 
 {% endblock %}
