@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Product;
+use App\Form\DTO\EditProductModel;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\AbstractType;
@@ -65,7 +66,6 @@ class EditProductFormType extends AbstractType
             ->add('newImage', FileType::class,[
                 'label'=>'Choose new image',
                 'required' => false,
-                'mapped' => false,
                 'attr'=> [
                     'class' => 'form-control-file'
                 ]
@@ -95,7 +95,7 @@ class EditProductFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Product::class,
+            'data_class' => EditProductModel::class,
         ]);
     }
 }
