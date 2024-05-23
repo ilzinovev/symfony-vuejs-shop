@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Category;
 use App\Entity\Product;
+use App\Form\EditCategoryFormType;
 use App\Form\Handler\ProductFormHandler;
 use App\Repository\CategoryRepository;
 use App\Utils\Manager\ProductManager;
@@ -22,7 +23,7 @@ class CategoryController extends AbstractController
      */
     public function list(CategoryRepository $categoryRepository): Response
     {
-        $categories = $categoryRepository->findBy([],['id' => 'DESC']);
+        $categories = $categoryRepository->findBy([], ['id' => 'DESC']);
         return $this->render('admin/category/list.html.twig', [
             'categories' => $categories,
         ]);
@@ -34,7 +35,19 @@ class CategoryController extends AbstractController
      */
     public function edit(Request $request, Category $category = null): Response
     {
-        return null;
+        if (!$category) {
+            $category = new Category();
+        }
+
+        $form = $this->createForm(EditCategoryFormType::class, $category);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+        }
+
+        return $this->render('admin/category/edit.html.twig', [
+            'category' => $category,
+            'form'     => $form->createView()
+        ]);
     }
 
     /**
@@ -42,6 +55,6 @@ class CategoryController extends AbstractController
      */
     public function delete(Category $category): Response
     {
-        return null
+        return null;
     }
 }
