@@ -4,9 +4,12 @@ namespace App\Controller\Admin;
 
 use App\Entity\Category;
 use App\Entity\Product;
+use App\Form\DTO\EditCategoryModel;
 use App\Form\EditCategoryFormType;
+use App\Form\Handler\CategoryFormHandler;
 use App\Form\Handler\ProductFormHandler;
 use App\Repository\CategoryRepository;
+use App\Utils\Manager\CategoryManager;
 use App\Utils\Manager\ProductManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,7 +26,7 @@ class CategoryController extends AbstractController
      */
     public function list(CategoryRepository $categoryRepository): Response
     {
-        $categories = $categoryRepository->findBy([], ['id' => 'DESC']);
+        $categories = $categoryRepository->findBy(['isDeleted' => false], ['id' => 'DESC']);
         return $this->render('admin/category/list.html.twig', [
             'categories' => $categories,
         ]);
@@ -33,15 +36,19 @@ class CategoryController extends AbstractController
      * @Route("/edit/{id}", name="edit")
      * @Route("/add", name="add")
      */
-    public function edit(Request $request, Category $category = null): Response
-    {
-        if (!$category) {
-            $category = new Category();
-        }
+    public function edit(
+        Request $request,
+        CategoryFormHandler $categoryFormHandler,
+        Category $category = null
+    ): Response {
+        $editCategoryModel = EditCategoryModel::makeFromCategory($category);
 
-        $form = $this->createForm(EditCategoryFormType::class, $category);
+        $form = $this->createForm(EditCategoryFormType::class, $editCategoryModel);
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
+            $category = $categoryFormHandler->processEditForm($editCategoryModel);
+            return $this->redirectToRoute('admin_category_edit', ['id' => $category->getId()]);
         }
 
         return $this->render('admin/category/edit.html.twig', [
@@ -53,8 +60,10 @@ class CategoryController extends AbstractController
     /**
      * @Route("/delete/{id}", name="delete")
      */
-    public function delete(Category $category): Response
+    public function delete(Category $category, CategoryManager $categoryManager): Response
     {
-        return null;
+        $categoryManager->remove($category);
+
+        return $this->redirectToRoute('admin_category_list');
     }
 }

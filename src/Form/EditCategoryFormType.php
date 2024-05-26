@@ -2,8 +2,8 @@
 
 namespace App\Form;
 
-use App\Entity\Category;
 
+use App\Form\DTO\EditCategoryModel;
 use Symfony\Component\Form\AbstractType;
 
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -33,7 +33,7 @@ class EditCategoryFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Category::class,
+            'data_class' => EditCategoryModel::class,
         ]);
     }
 }
