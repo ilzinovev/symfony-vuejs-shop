@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Main;
 
 use App\Entity\User;
-use App\Form\RegistrationFormType;
+use App\Form\Main\RegistrationFormType;
 use App\Repository\UserRepository;
-use App\Security\EmailVerifier;
+use App\Security\Verifier\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -64,7 +64,7 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('main_homepage');
         }
 
-        return $this->render('main/security/registration/register.html.twig', [
+        return $this->render('main/security/registration.html.twig', [
             'registrationForm' => $form->createView(),
         ]);
     }

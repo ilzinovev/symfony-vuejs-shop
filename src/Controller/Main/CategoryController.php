@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Main;
 
 use App\Entity\Category;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,8 +18,11 @@ class CategoryController extends AbstractController
         if(!$category){
             return new NotFoundHttpException();
         }
-        return $this->render('category/index.html.twig', [
-            'controller_name' => 'CategoryController',
+
+        $products = $category->getProducts()->getValues();
+        return $this->render('main/category/show.html.twig', [
+            'category' => $category,
+            'products' => $products,
         ]);
     }
 }
