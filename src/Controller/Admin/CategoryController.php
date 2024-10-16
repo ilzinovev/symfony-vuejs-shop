@@ -7,7 +7,7 @@ use App\Form\Admin\EditCategoryFormType;
 use App\Form\DTO\EditCategoryModel;
 use App\Form\Handler\CategoryFormHandler;
 use App\Repository\CategoryRepository;
-use App\Utils\Manager\CategoryManager;
+use App\Utils\Manager\OrderManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -62,7 +62,7 @@ class CategoryController extends AbstractController
     /**
      * @Route("/delete/{id}", name="delete")
      */
-    public function delete(Category $category, CategoryManager $categoryManager): Response
+    public function delete(Category $category, OrderManager $categoryManager): Response
     {
         $categoryManager->remove($category);
         $this->addFlash('success', 'deleted');
