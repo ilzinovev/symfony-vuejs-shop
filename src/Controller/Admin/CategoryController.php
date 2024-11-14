@@ -5,7 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Category;
 use App\Form\Admin\EditCategoryFormType;
 use App\Form\DTO\EditCategoryModel;
-use App\Form\Handler\CategoryFormHandler;
+use App\Form\Handler\OrderFormHandler;
 use App\Repository\CategoryRepository;
 use App\Utils\Manager\OrderManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -35,7 +35,7 @@ class CategoryController extends AbstractController
      */
     public function edit(
         Request $request,
-        CategoryFormHandler $categoryFormHandler,
+        OrderFormHandler $categoryFormHandler,
         Category $category = null
     ): Response {
         $editCategoryModel = EditCategoryModel::makeFromCategory($category);
